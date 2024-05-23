@@ -12,6 +12,11 @@ export class PropuestaService {
     ){}
 
     async crearPropuesta(propuesta: PropuestaEntity): Promise<PropuestaEntity> {
+
+        if (propuesta.titulo.toString() == "" || !propuesta.titulo){
+            throw new BusinessLogicException("El titulo de la propuesta esta vacio", BusinessError.PRECONDITION_FAILED);
+        }
+
         return await this.propuestaRepository.save(propuesta);
     }
 
@@ -32,7 +37,10 @@ export class PropuestaService {
         if (!propuesta)
           throw new BusinessLogicException("The propuesta with the given id was not found", BusinessError.NOT_FOUND);
         
-        //TODO: Handle elimination if not proyects associated
+        if (propuesta.proyecto){
+            throw new BusinessLogicException("La propuesta tiene proyectos asociados", BusinessError.PRECONDITION_FAILED);
+        }
+        
         await this.propuestaRepository.remove(propuesta);
     }
 
