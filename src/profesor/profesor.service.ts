@@ -31,16 +31,19 @@ export class ProfesorService {
         return profesor;
     }
 
-    async delteProfesorById(id: number) {
+    async deleteProfesorById(id: number) {
         const profesor: ProfesorEntity = await this.profesorRepository.findOne({where:{id}});
         if (!profesor)
           throw new BusinessLogicException("The profesor with the given id was not found", BusinessError.NOT_FOUND);
 
-        profesor.propuestas.forEach(propuesta => {
-          if (propuesta.proyecto) {
-            throw new BusinessLogicException("El profesor tiene propuestas con proyectos asociados", BusinessError.PRECONDITION_FAILED);
-          }
-        });
+        if (profesor.propuestas != undefined){
+
+          profesor.propuestas.forEach(propuesta => {
+            if (propuesta.proyecto) {
+              throw new BusinessLogicException("El profesor tiene propuestas con proyectos asociados", BusinessError.PRECONDITION_FAILED);
+            }
+          });
+        }
         
         await this.profesorRepository.remove(profesor);
     }
@@ -50,12 +53,14 @@ export class ProfesorService {
         if (!profesor)
           throw new BusinessLogicException("The profesor with the given cedula was not found", BusinessError.NOT_FOUND);
         
-        profesor.propuestas.forEach(propuesta => {
-          if (propuesta.proyecto) {
-            throw new BusinessLogicException("El profesor tiene propuestas con proyectos asociados", BusinessError.PRECONDITION_FAILED);
-          }
-        });
+        if (profesor.propuestas != undefined){
 
+          profesor.propuestas.forEach(propuesta => {
+            if (propuesta.proyecto) {
+              throw new BusinessLogicException("El profesor tiene propuestas con proyectos asociados", BusinessError.PRECONDITION_FAILED);
+            }
+          });
+        }
         await this.profesorRepository.remove(profesor);
     }
     
